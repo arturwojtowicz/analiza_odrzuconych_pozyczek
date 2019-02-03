@@ -1,8 +1,15 @@
 # Zaciąganie bibliotek
-library("forecast")
-library("timeSeries")
-library("ggplot2")
+library("readr") #Load our data
+library("dplyr") # Data Wrangling
+library("ggplot2") #Visualization
+library("ggfortify") #Visualization
+library("timeSeries") #Statistical Tests for Time Series data
+library("forecast") #Time Series Forecasting
+library(DT) # View our Raw Data
 
+install.packages('dplyr')
+install.packages('ggfortify')
+install.packages('DT')
 # Ustawianie lokalnej pozycji do m.in zapisu plików oraz ich wczytywania
 setwd("/home/dziabaku/Studia/pakiety_statystyczne/Projekt/")
 
@@ -20,16 +27,16 @@ data.test = window(data.ts, start = c(2011, 366)) # Ponieważ w 2012 roku jest 3
 png('train_year_plot.png')
 plot.ts(data.train/1000000,
         xaxt = 'n',
-        main = 'Szereg czasowy dla odrzucanych pożyczek przez Lending Club',
+        main = 'Szereg czasowy dla kwoty odrzuconych pożyczek przez Lending Club',
         xlab = 'Rok',
-        ylab = 'Suma pożyczek (mln dolarów)')
+        ylab = 'Kwota odrzuconych pożyczek (mln dolarów)')
 axis(1, at=2007:2012, las=2)
 dev.off()
 
-png('train_month_plot.png')
-monthplot(data.train, 
-          main = 'Wykres wahań sezonowych', 
-          xlab = 'Miesiąc',
-          ylab = 'Suma pożyczek (mln dolarów)')
+plots = stl(data.train,s.window="periodic")
 
-png('train_day_plot.png')
+png('train_season_plot.png')
+ggseasonplot(data.train, year.labels=TRUE, year.labels.left=FALSE) +
+             ylab("Kwota odrzuconych pożyczek (mln dolarów)") +
+             ggtitle("Wykres wahań sezonowych")
+dev.off()
