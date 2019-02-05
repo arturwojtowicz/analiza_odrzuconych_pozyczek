@@ -21,7 +21,7 @@ data.test = window(data.ts, start = c(2011, 366)) # Ponieważ w 2012 roku jest 3
 data_monthly.test = window(data_monthly.ts, start = c(2012, 1))
 
 # Utworzenie szeregu czasowego dla kwoty odrzucanych dziennie pożyczek przez Lending Club dla zbioru uczącego
-png('images/train_year_plot.png',
+png('images/data_train_roczny_ogolny.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -37,7 +37,7 @@ axis(1, at=2007:2012, las=2)
 dev.off()
 
 
-png('images/train_month_plot.png',
+png('images/data_monthly_train_miesieczny_ogolny.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -51,7 +51,7 @@ monthplot(data_monthly.train/1000000,
 dev.off()
 
 
-png('images/train_season_plot.png',
+png('images/data_monthly_train_sezonowy_ogolny.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -65,7 +65,7 @@ seasonplot(data_monthly.train/1000000,
 dev.off()
 
 
-png('images/train_box_plot.png',
+png('images/data_monthly_train_pudelkowy.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -79,7 +79,7 @@ boxplot(data_monthly.train/1000000 ~ cycle(data_monthly.train),
 dev.off()
 
 
-png('images/train_lag_plot.png',
+png('images/data_monthly_train_opoznienia.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -92,33 +92,33 @@ lag.plot(data_monthly.train/1000000,
 dev.off()
 
 
-png('images/train_acf_plot.png',
+png('images/data_monthly_train_wykres_autokorelacji.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
-Acf(data.train, 
+Acf(data_monthly.train, 
     main="Wykres autokorelacji ACF wartości dziennych")
 dev.off()
 
 
-png('images/train_pacf_plot.png',
+png('images/data_monthly_train_wykres_autokorelacji_czastkowej.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
 
-Pacf(data.train, main='Wykres autokorelacji cząstkowej PACF wartości dziennych')
+Pacf(data_monthly.train, main='Wykres autokorelacji cząstkowej PACF wartości dziennych')
 dev.off()
 
 # Transformacja BoxaCoxa
-lambda.data.ts = BoxCox.lambda(data.train);lambda.data.ts
-data.train.BoxCox = BoxCox(data.train, lambda = lambda.data.ts)
+lambda.data_monthly.ts = BoxCox.lambda(data_monthly.train);lambda.data.ts
+data_monthly.train.BoxCox = BoxCox(data_monthly.train, lambda = lambda.data.ts)
 
 
-png('images/train_boxcox_plot.png',
+png('images/data_monthly_transformacja_boxacoxa.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
@@ -126,12 +126,12 @@ png('images/train_boxcox_plot.png',
     pointsize = 4)
 
 par(mfrow=c(2,1))
-plot(data.train/1000000, 
-     main="Dane oryginalne",
+plot(data_monthly.train/1000000, 
+     main="Dane miesięczne oryginalne",
      ylab = "Kwota pożyczek (mln dolarów)",
      xlab = "Miesiąc")
-plot(data.train.BoxCox, 
-     main="Dane z transformacją BoxaCoxa przy lambda = 0.3692711",
+plot(data_monthly.train.BoxCox, 
+     main="Dane miesięczne z transformacją BoxaCoxa przy lambda = 0.3692711",
      yaxt = 'n',
      ylab = '',
      xlab = "Miesiąc")
@@ -140,55 +140,53 @@ dev.off()
 
 # Różnicowanie 
 
-data.train.diff = diff(data.train, differences=1)
+data_monthly.diff = diff(data_monthly.train, differences=1)
 
-png('images/train_original_diff_plot.png',
+png('images/data_monthly_train_dane_oryginalne.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
 
-tsdisplay(data.train, main = "Dane oryginalne")
+tsdisplay(data_monthly.train, main = "Dane oryginalne")
 dev.off()
 
-
-png('images/train_diff_diff_plot.png',
+png('images/data_monthly_train_roznicowanie_z_opoznieniem_jeden.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
 
-tsdisplay(data.train.diff, main = "Dane po zróżnicowaniu z opóźnieniem 1")
+tsdisplay(data_monthly.train.diff, main = "Dane po zróżnicowaniu z opóźnieniem 1")
 dev.off()
-
 
 # Dekompozycja
-data.train.decom = decompose(data.train, type="additive")
+data_monthly.train.decom = decompose(data_monthly.train, type="additive")
 
-png('images/train_diff_plot.png',
+png('images/train_monthly_train_dekompozycja.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
 
-plot(data.train.decom)
+plot(data_monthly.train.decom)
 dev.off()
 
 
-png('images/train_fluct_plot.png',
+png('images/train_monthly_train_fluktuacje.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
 
-tsdisplay(data.train.decom$random, main="Losowe fluktuacje")
+tsdisplay(data_monthly.train.decom$random, main="Losowe fluktuacje")
 dev.off()
 
 # Testowanie hipotezy o rozkładzie normalnym dla reszt
-shapiro.test(data.train.diff) # Wykluczenie białego szumu. Odrzucamy h0
+shapiro.test(data_monthly.train.diff) # Wykluczenie białego szumu. Odrzucamy h0
 
 
