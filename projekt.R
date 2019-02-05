@@ -88,7 +88,8 @@ png('images/data_monthly_train_opoznienia.png',
 
 lag.plot(data_monthly.train/1000000, 
          lags = 12, 
-         main = "Wykres rozrzutu dla wartości opóźnionych")
+         main = "Wykres rozrzutu dla wartości opóźnionych",
+         do.lines = FALSE)
 dev.off()
 
 
@@ -99,7 +100,7 @@ png('images/data_monthly_train_wykres_autokorelacji.png',
     res       = 1200,
     pointsize = 4)
 Acf(data_monthly.train, 
-    main="Wykres autokorelacji ACF wartości dziennych")
+    main="Wykres autokorelacji ACF wartości miesięcznych")
 dev.off()
 
 
@@ -110,12 +111,12 @@ png('images/data_monthly_train_wykres_autokorelacji_czastkowej.png',
     res       = 1200,
     pointsize = 4)
 
-Pacf(data_monthly.train, main='Wykres autokorelacji cząstkowej PACF wartości dziennych')
+Pacf(data_monthly.train, main='Wykres autokorelacji cząstkowej PACF wartości miesięcznych')
 dev.off()
 
 # Transformacja BoxaCoxa
-lambda.data_monthly.ts = BoxCox.lambda(data_monthly.train);lambda.data.ts
-data_monthly.train.BoxCox = BoxCox(data_monthly.train, lambda = lambda.data.ts)
+lambda.data_monthly.ts = BoxCox.lambda(data_monthly.train);lambda.data_monthly.ts
+data_monthly.train.BoxCox = BoxCox(data_monthly.train, lambda = lambda.data_monthly.ts)
 
 
 png('images/data_monthly_transformacja_boxacoxa.png',
@@ -140,7 +141,7 @@ dev.off()
 
 # Różnicowanie 
 
-data_monthly.diff = diff(data_monthly.train, differences=1)
+data_monthly.train.diff = diff(data_monthly.train, differences=1)
 
 png('images/data_monthly_train_dane_oryginalne.png',
     width     = 3.25,
@@ -188,5 +189,89 @@ dev.off()
 
 # Testowanie hipotezy o rozkładzie normalnym dla reszt
 shapiro.test(data_monthly.train.diff) # Wykluczenie białego szumu. Odrzucamy h0
+
+# AR(1) - z PACF
+# MA(2) - z ACF zróżnicowania
+data_monthly.AR2 = Arima(data_monthly.train, order = c(2,1,0), seasonal = c(0,0,0))
+data_monthly.MA1 = Arima(data_monthly.train, order = c(0,1,1), seasonal = c(0,0,0))
+
+summary(data_monthly.AR2)
+# AIC=2055.9   AICc=2056.38   BIC=2061.93
+summary(data_monthly.MA1)
+# AIC=2056.01   AICc=2056.24   BIC=2060.02
+
+png('images/train_monthly_train_AR2_reszty.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+tsdisplay(data_monthly.AR1$residuals, main = "Wykres reszt modelu AR2")
+dev.off()
+
+png('images/train_monthly_train_MA1_reszty.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+tsdisplay(data_monthly.MA2$residuals, main = "Wykres reszt modelu MA1")
+dev.off()
+
+#Test losowości reszt
+Box.test(data_monthly.AR2$residuals)
+Box.test(data_monthly.MA1$residuals)
+
+# Automatyczny wybór optymalnego różnicowania
+ndiffs(data_monthly.train)
+nsdiffs(data_monthly.train)
+auto.arima(data_monthly.train, allowdrift=FALSE, trace=TRUE)
+# AIC=2056.01   AICc=2056.24   BIC=2060.02
+
+
+# Prognozy 
+
+data_monthly.AR2.prognoses <- forecast(data_monthly.AR2, h=length(data_monthly.test))
+data_monthly.MA1.prognoses <- forecast(data_monthly.MA1, h=length(data_monthly.test))
+
+png('images/prognozy.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+par(mfrow=c(3,1))
+plot(data_monthly.ts, main = "Główny szereg czasowy")
+plot(data_monthly.AR2.prognoses, main = "Prognoza AR2")
+plot(data_monthly.MA1.prognoses, main = "Prognoza MA1")
+dev.off()
+
+
+png('images/mieszane.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+ts.plot(
+  data_monthly.test,
+  data_monthly.AR2.prognoses$mean,
+  data_monthly.MA1.prognoses$mean,
+  main = "Porównanie prognoz z rzeczywistym stanem",
+  col = c("red", "green", "black"),
+  xlab = "Okres")
+grid()
+legend("topleft", legend = c("Zbiór testowy", "AR2", "MA1"), col = c("red", "green", "black"), lty=1:2, cex=0.7)
+dev.off()
+
+
+### BŁĘDY PREDYKCJI
+
+
+
 
 
