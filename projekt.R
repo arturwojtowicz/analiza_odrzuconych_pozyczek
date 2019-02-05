@@ -228,6 +228,7 @@ Box.test(data_monthly.MA1$residuals)
 ndiffs(data_monthly.train)
 nsdiffs(data_monthly.train)
 auto.arima(data_monthly.train, allowdrift=FALSE, trace=TRUE)
+# MA(1)
 # AIC=2056.01   AICc=2056.24   BIC=2060.02
 
 
@@ -258,11 +259,12 @@ png('images/mieszane.png',
     pointsize = 4)
 
 ts.plot(
-  data_monthly.test,
-  data_monthly.AR2.prognoses$mean,
-  data_monthly.MA1.prognoses$mean,
+  data_monthly.test/1000000,
+  data_monthly.AR2.prognoses$mean/1000000,
+  data_monthly.MA1.prognoses$mean/1000000,
   main = "Porównanie prognoz z rzeczywistym stanem",
   col = c("red", "green", "black"),
+  ylab = "mln dolarów",
   xlab = "Okres")
 grid()
 legend("topleft", legend = c("Zbiór testowy", "AR2", "MA1"), col = c("red", "green", "black"), lty=1:2, cex=0.7)
@@ -270,8 +272,34 @@ dev.off()
 
 
 ### BŁĘDY PREDYKCJI
+criteries <- c("MAE", "RMSE", "MAPE", "MASE")
+round(accuracy(data_monthly.AR2.prognoses)[,criteries],2)
+round(accuracy(data_monthly.MA1.prognoses)[,criteries],2)
 
 
+# METODA HOLTA
+data.holt <- holt(data.train, h=length(data.test))
+data_monthly.holt <- holt(data_monthly.train, h=length(data_monthly.test))
+
+png('images/holt.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+par(mfrow=c(2,1))
+ts.plot(data.test/1000000, data.holt$mean/1000000, main = "Prognozowanie metodą Holta dla danych dziennych",
+        col = c('black', 'red'), lty=1:2, xlab="Okres", ylab = "mln dolarów")
+grid()
+legend("bottomright", legend=c("Holt", "Zbiór testowy"), col = c("red", "black"), lty=1:2)
+
+ts.plot(data_monthly.test/1000000, data_monthly.holt$mean/1000000, main = "Prognozowanie metodą Holta dla danych miesięcznych",
+        col = c('black', 'red'), lty=1:2, xlab="Okres", ylab = "mln dolarów")
+grid()
+legend("bottomright", legend=c("Holt", "Zbiór testowy"), col = c("red", "black"), lty=1:2)
+dev.off()
 
 
-
+round(accuracy(data.holt)[,criteries],2)
+round(accuracy(data_monthly.holt)[,criteries],2)
