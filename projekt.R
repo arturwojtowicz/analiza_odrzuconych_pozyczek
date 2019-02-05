@@ -38,21 +38,26 @@ monthplot(data_monthly.train/1000000,
 dev.off()
 
 png('images/train_season_plot.png')
-seasonplot(data_monthly.train,
+seasonplot(data_monthly.train/1000000,
            main = "Wykres wahań sezonowych",
            ylab = "Kwota odrzuconych pożyczek (mln dolarów)",
            xlab = "Miesiąc")
 dev.off()
 
-png('images/train_box_plot.png')
-boxplot(data_monthly.train ~ cycle(data_monthly.train),
+png('images/train_box_plot.png', res = 1200)
+boxplot(data_monthly.train/1000000 ~ cycle(data_monthly.train),
         main = "Wykres pudełkowy dla każdego miesiąca",
         ylab = "Kwota odrzuconych pożyczek (mln dolarów)",
         xlab = "Miesiąc")
 dev.off()
 
-png('images/train_lag_plot.png')
-lag.plot(data_monthly.train, 
+png('images/train_lag_plot.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+lag.plot(data_monthly.train/1000000, 
          lags = 12, 
          main = "Wykres rozrzutu dla wartości opóźnionych")
 dev.off()
@@ -66,4 +71,18 @@ png('images/train_pacf_plot.png')
 Pacf(data.train, main='Wykres autokorelacji cząstkowej PACF wartości dziennych')
 dev.off()
 
+lambda.data.ts = BoxCox.lambda(data.train);lambda.data.ts
+data.train.BoxCox = BoxCox(data.train, lambda = lambda.data.ts)
 
+png('images/train_boxcox_plot.png')
+par(mfrow=c(2,1))
+plot(data.train/1000000, 
+     main="Dane oryginalne",
+     ylab = "Kwota pożyczek (mln dolarów)",
+     xlab = "Miesiąc")
+plot(data.train.BoxCox, 
+     main="Dane z transformacją BoxaCoxa przy lambda = 0.3692711",
+     yaxt = 'n',
+     ylab = '',
+     xlab = "Miesiąc")
+dev.off()
