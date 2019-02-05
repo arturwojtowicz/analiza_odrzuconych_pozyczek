@@ -16,10 +16,12 @@ data_monthly.ts = ts(data_monthly$Amount.requested, start = c(2007, 5), frequenc
 
 # Utworzenie okna uczącego się oraz testowego
 data.train = window(data.ts, end = c(2011, 365))
+data_monthly.train = window(data_monthly.ts, end = c(2011, 12))
 data.test = window(data.ts, start = c(2011, 366)) # Ponieważ w 2012 roku jest 366 dni
+data_monthly.test = window(data_monthly.ts, start = c(2012, 1))
 
 # Utworzenie szeregu czasowego dla kwoty odrzucanych dziennie pożyczek przez Lending Club dla zbioru uczącego
-png('train_year_plot.png')
+png('images/train_year_plot.png')
 plot.ts(data.train/1000000,
         xaxt = 'n',
         main = 'Szereg czasowy dla kwoty odrzuconych pożyczek przez Lending Club',
@@ -28,13 +30,40 @@ plot.ts(data.train/1000000,
 axis(1, at=2007:2012, las=2)
 dev.off()
 
-plots = stl(data.train,s.window="periodic")
-
-png('train_season_plot.png')
-plot.ts(plots$time.series[,'seasonal']/1000000,
-        xaxt = 'n',
-        main = 'Wykres wahań sezonowych',
-        xlab = 'Rok',
-        ylab = 'Kwota odrzuconych pożyczek (mln dolarów)')
-axis(1, at=2007:2012, las=2)
+png('images/train_month_plot.png')
+monthplot(data_monthly.train/1000000, 
+          ylab = "Kwota odrzuconych pożyczek (mln dolarów)",
+          main = "Wykres wahań sezonowych",
+          xlab = "Miesiąc")
 dev.off()
+
+png('images/train_season_plot.png')
+seasonplot(data_monthly.train,
+           main = "Wykres wahań sezonowych",
+           ylab = "Kwota odrzuconych pożyczek (mln dolarów)",
+           xlab = "Miesiąc")
+dev.off()
+
+png('images/train_box_plot.png')
+boxplot(data_monthly.train ~ cycle(data_monthly.train),
+        main = "Wykres pudełkowy dla każdego miesiąca",
+        ylab = "Kwota odrzuconych pożyczek (mln dolarów)",
+        xlab = "Miesiąc")
+dev.off()
+
+png('images/train_lag_plot.png')
+lag.plot(data_monthly.train, 
+         lags = 12, 
+         main = "Wykres rozrzutu dla wartości opóźnionych")
+dev.off()
+
+png('images/train_acf_plot.png')
+Acf(data.train, 
+    main="Wykres autokorelacji ACF wartości dziennych")
+dev.off()
+
+png('images/train_pacf_plot.png')
+Pacf(data.train, main='Wykres autokorelacji cząstkowej PACF wartości dziennych')
+dev.off()
+
+
