@@ -110,7 +110,7 @@ Do analiz szeregów czasowych, potrzebować będziemy jedynie dwóch pierwszych 
 
     \centering
 	\includegraphics[width=\textwidth]{images/data_ogolnie_ts.png}
-    \caption{Ogólne przedstawienie danych dziennych oraz tygodniowych w czasie.}
+    \caption{Ogólne przedstawienie danych dziennych oraz miesięcznych w czasie.}
     \label{fig:data_ogolnie_ts}
 
 \end{figure}
@@ -122,7 +122,9 @@ Czyste dane zostały przedstawione na Rysunek \ref{fig:data_ogolnie_ts}, gdzie j
 \item Usunięcie lub awaria bazy danych;
 \item Działanie na rzecz wykluczenia danych ogólnodostępnych;
 \end{itemize}
-Firma \textit{Lending Club} wystartowała na Facebooku w 2006 roku, a na giełdę wskoczyła dopiero 12 grudnia 2014, więc nie jesteśmy w stanie stwierdzić, czy występowało wtedy załamanie giełdowe dla tej firmy.
+Firma \textit{Lending Club} wystartowała na Facebooku w 2006 roku, a na giełdę wskoczyła dopiero 12 grudnia 2014, więc nie jesteśmy w stanie stwierdzić, czy występowało wtedy załamanie giełdowe dla tej firmy, stąd możliwe jedynie spekulacje dotyczące załamania tendencji wzrostowej.
+
+Jednocześnie możemy zauważyć brak wzorców sezonowych w danych.
 
 \subsection{Odstępstwa w danych}
 
@@ -161,6 +163,63 @@ Kod źródłowy wszystkich omawianych skryptów napisanych w R oraz Python a tak
 \url{https://github.com/arturwojtowicz/analiza_odrzuconych_pozyczek}
 \end{center}
 
+\newpage
+
+\section{Wizualizacja}
+
+\subsection{Wykresy sezonowe}
+
+Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelkowy} możemy zauważyć spore różnice w średnich wartościach dla poszczególnych szeregów czasowych. Widzimy również załamanie w piątym miesiącu o czym wspominałem przy omawianiu Rysunek \ref{fig:data_ogolnie_ts}. Takiej samej informacji dostarczają nam pozostałe dwa wykresy - Rysunek  \ref{fig:data_monthly_train_sezonowy_ogolny}, \ref{fig:data_monthly_train_miesieczny_ogolny}. Zauważalny jest trend wzrostowy. Wahania sezonowe nie są widoczne.
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_monthly_train_pudelkowy.png}
+    \caption{Wykres pudełkowy każdego miesiąca dla analizowanego szeregu czasowego}
+    \label{fig:data_monthly_train_pudelkowy}
+
+\end{figure}
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_monthly_train_sezonowy_ogolny.png}
+    \caption{Wykres wahań sezonowych każdego miesiąca dla analizowanego szeregu czasowego.}
+    \label{fig:data_monthly_train_sezonowy_ogolny}
+
+\end{figure}
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_monthly_train_miesieczny_ogolny.png}
+    \caption{Wykres wahań miesięcznych dla analizwanego szeregu czasowego.}
+    \label{fig:data_monthly_train_miesieczny_ogolny}
+
+\end{figure}
+
+\newpage
+
+\subsection{Wykresy autokorelacji}
+
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_monthly_train_opoznienia.png}
+    \caption{Wykres rozrzutu dla wartości opóźnionych dla danych miesięcznych analizowanego szeregu czasowego.}
+    \label{fig:data_monthly_train_opoznienia}
+
+\end{figure}
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_monthly_train_wykres_autokorelacji_oraz_czastkowej.png}
+    \caption{Wykres autokorelacji (ACF) oraz autokorelacji cząstkowej (PACF) dla danych miesięcznych analizowanego szeregu czasowego.}
+    \label{fig:data_monthly_train_wykres_autokorelacji_oraz_czastkowej}
+
+\end{figure}
 
 \clearpage
 

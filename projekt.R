@@ -110,26 +110,18 @@ lag.plot(data_monthly.train/1000000,
          do.lines = FALSE)
 dev.off()
 
-
-png('images/data_monthly_train_wykres_autokorelacji.png',
+png('images/data_monthly_train_wykres_autokorelacji_oraz_czastkowej.png',
     width     = 3.25,
     height    = 3.25,
     units     = "in",
     res       = 1200,
     pointsize = 4)
+
+par(mfrow=c(2,1))
 Acf(data_monthly.train, 
     main="Wykres autokorelacji ACF wartości miesięcznych")
-dev.off()
-
-
-png('images/data_monthly_train_wykres_autokorelacji_czastkowej.png',
-    width     = 3.25,
-    height    = 3.25,
-    units     = "in",
-    res       = 1200,
-    pointsize = 4)
-
-Pacf(data_monthly.train, main='Wykres autokorelacji cząstkowej PACF wartości miesięcznych')
+Pacf(data_monthly.train, 
+     main='Wykres autokorelacji cząstkowej PACF wartości miesięcznych')
 dev.off()
 
 # Transformacja BoxaCoxa
