@@ -1,9 +1,15 @@
 \documentclass[11pt]{article}
  
+\usepackage{hyperref}
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{indentfirst}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{lscape}
+\usepackage{adjustbox}
 \selectlanguage{polish}
 
 
@@ -77,26 +83,84 @@
 
 \newpage
 
-\begin{abstract}
+\section{Wprowadzenie}
 
-\end{abstract}
+\subsection{Zbiór danych}
+Dane, które zostały użyte w tym sprawozdaniu, pochodzą z głównej strony firmy \textit{Lending Club} - firmy będącej pośrednikiem między pożyczkodawcą a pożyczkobiorcą na terenie USA, zaś dane, są ogólnodostępne na oficjalnej stronie, pod adresem:
+\begin{center}
+\url{https://www.lendingclub.com/info/download-data.action}
+\end{center}
+
+Zbiór danych zawiera ponad 755 tysięcy rekordów odrzuconych pożyczek w latach od 26 maja 2007 do 31 grudnia 2012 oraz dziewięć kolumn, na które składają się:
+\begin{itemize}
+\item \textit{Amount Requested} - Kwota całkowita wnioskowana przez pożyczkobiorcę;
+\item \textit{Application Date} - Data aplikacji o pożyczkę przez pożyczkobiorcę;
+\item \textit{Loan Title} - Tytuł pożyczki podaną przez pożyczkobiorcę;
+\item \textit{Risk Score} - Do 5 listopada 2013 używano tutaj \textit{FICO score} stworzonego przez \textit{Fair Isaac Corporation} do oceny ryzyka udzielenia pożyczki. Po 5 listopada 2013 roku, do oceny ryzyka korzystano z Vantage score;
+\item \textit{Debt-To-Income Ratio} - Obliczona proporcja względem całkowitych miesięcznych spłat zadłużeń pożyczkodawcy, odliczając od tego zakwaterowanie i wnioskowaną pożyczkę. Wartość ta, jest dzielona przez miesięczne przychody pożyczkobiorcy, które zgłosił;
+\item \textit{Zip Code} - Pierwsze trzy numery kodu pocztowego pożyczkobiorcy;
+\item \textit{State} - Stan (w USA), w którym pożyczkodawca składa aplikację o pożyczkę;
+\item \textit{Employment Length} - Okres w latach zatrudnienia. Możliwe wartości znajdują się pomiędzy 0 a 10, gdzie 0 oznacza mniej niż rok zaś 10 więcej niż dziesięc lat.
+\item \textit{Policy Code} - W przypadku naszych danych, wartość każdego rekordu tutaj, jest równa 0.
+\end{itemize}
+
+Do analiz szeregów czasowych, potrzebować będziemy jedynie dwóch pierwszych kolumn - \textit{Amount Requested} oraz \textit{Application Date}. W celu ich wyciągnięcia oraz dopasowania, napisany został skrypt w języku \textit{Python}, który tworzy dwa pliki csv. Pierwszy, zawierający dzienną sumę pożyczek wnioskowanych przez pożyczkobiorcę, oraz drugi, zawierający miesięczną sumę pożyczek wnioskowanych przez pożyczkobiorcę.
+
+\begin{figure}[h]
+
+    \centering
+	\includegraphics[width=\textwidth]{images/data_ogolnie_ts.png}
+    \caption{Ogólne przedstawienie danych dziennych oraz tygodniowych w czasie.}
+    \label{fig:data_ogolnie_ts}
+
+\end{figure}
 
 \newpage
 
-\section{Zbiór danych}
-
-Dane, które zostały użyte w tym sprawozdaniu, pochodzą z głównej strony firmy \textit{Lending Club} - firmy udzielającej pożyczek na terenie USA, zaś dane, są ogólnodostępne pod adresem \hyperref[https://www.lendingclub.com/info/download-data.action]{https://www.lendingclub.com/info/download-data.action}. Zawierają one ponad 755 tysięcy rekordów odrzuconych pożyczek w latach od 26 maja 2007 do 31 grudnia 2012 oraz dziewięć kolumn, na które składają się:
+Czyste dane zostały przedstawione na Rysunek \ref{fig:data_ogolnie_ts}, gdzie już na starcie możemy zauważyć trend wzrostowy. Problematyczny może tutaj się okazać miesiąc maj w roku 2011, gdzie widzimy intensywny spadek ilości odrzuconych pożyczek. Istnieje wiele przesłanek tak intensywnego spadku, jednakże najpewniejszymi są:
 \begin{itemize}
-\item Amount Requested - Kwota całkowita wnioskowana przez pożyczkobiorcę;
-\item Application Date - Data aplikacji o pożyczkę przez pożyczkobiorcę;
-\item Loan Title - Tytuł pożyczki otrzymana przez pożyczkobiorcę;
-\item Risk Score - Do 5 listopada 2013 używano tutaj \textit{FICO score} stworzonego przez \textit{Fair Isaac Corporation} do oceny ryzyka udzielenia pożyczki;
-\item Debt-To-Income Ratio - Obliczona proporcja względem całkowitych miesięcznych spłat zadłużeń pożyczkodawcy, odliczając od tego zakwaterowanie i wnioskowaną pożyczkę. Wartość ta, jest dzielona przez miesięczne przychody pożyczkobiorcy, które zgłosił;
-\item Zip Code - Pierwsze trzy numery kodu pocztowego pożyczkobiorcy;
-\item State - Stan, w którym pożyczkodawca składa aplikację o pożyczkę;
-\item Employment Length - Okres w latach zatrudnienia. Możliwe wartości znajdują się pomiędzy 0 a 10, gdzie 0 oznacza mniej niż rok zaś 10 więcej niż dziesięc lat.
-\item Policy Code - 
+\item Usunięcie lub awaria bazy danych;
+\item Działanie na rzecz wykluczenia danych ogólnodostępnych;
 \end{itemize}
+Firma \textit{Lending Club} wystartowała na Facebooku w 2006 roku, a na giełdę wskoczyła dopiero 12 grudnia 2014, więc nie jesteśmy w stanie stwierdzić, czy występowało wtedy załamanie giełdowe dla tej firmy.
+
+\subsection{Odstępstwa w danych}
+
+Analiza, którą przeprowadzam będzie na niezmodyfikowanych danych udostępnionych przez \textit{Lending Club}, jednakże dobrze jest wiedzieć o odstępstwach w danych. Analizujemy dane jedynie odrzuconych pożyczek dla osób fizycznych.
+
+\textit{Lending Club} oferuje pożyczki do 40 tysięcy dolarów dla osób prywatnych oraz do 300 tysięcy dolarów dla małych firm. Analizując bezpośrednio ogólnodostepne dane, możemy znaleźć dwa rekordy na wysokość pożyczki 0. Zauważyłem również, że istnieje kilkadziesiąt rekordów odstających wzwyż od zakładanych norm, dokładniej omówię sześć największych kwotowo aplikacji o pożyczkę:
+\begin{itemize}
+\item 10.09.2010 - 1.4 miliona dolarów na zakup samochodu;
+\item 16.10.2012 - 1.2 miliona dolarów na konsolidację zadłużenia;
+\item 16.10.2012 - milion dolarów na konsolidację zadłużenia
+\item 09.06.2011 - 500 tysięcy dolarów na określony cel jako inne;
+\item 15.06.2011 - 500 tysięcy dolarów na określony cel jako inne;
+\item 22.08.2012 - 300 tysięcy dolarów na zakup samochód.
+\end{itemize}
+
+Jak możemy zauważyć, dwa z trzech zapytań o pożyczkę powyżej miliona dolarów miała miejsce tego samego dnia, na podobną kwotę. Możliwe jest, że była to ta sama osoba, która sprawdzała swoją zdolność kredytową po tym, jak zadłużyła się w innych firmach/bankach. Można to traktować jako dane nadmiarowe.
+
+Podobną sytuację możemy zauważyć przy pożyczkach na 500 tysięcy dolarów, różnica dni pomiędzy nimi pozwala nam zakładać, że te zapytania zostały podane przez jedną osobę.
+
+Pożyczki na 300 tysięcy lub 1.4 miliona dolarów na zakup samochodu, mogą wydawać się abstrakcyjne, jednakże jak powyżej, osoba wysyłająca zapytanie mogła sprawdzać jedynie swoją zdolność kredytową, lub pomylić się przy wypełnianiu aplikacji.
+
+Analiza pozostałych czynników takich jak Risk Score, State, Debt-To-Income, przy bardzo podobnych pożyczkach jak wyżej wymieniłem może wskazywać na inną osobę, tak tym czynnikom nie należy wierzyć, ponieważ są one zależne od deklaracji pożyczkobiorcy. W zależności od Stanu, obowiązują inne przepisy. W zależności od deklaracji zarobkowych, mogą różnić się parametry Risk Score, Debt-To-Income. 
+
+Łącznie cały zbiór zawiera 218 rekordów, w których kwota przekraczała 40 tysięcy dolarów. Chciałbym nadmienić, że 157 z tych rekordów, czyli 72\% miała przeznaczenie - zakup samochodu.
+Po przeanalizowaniu odstępstw nasuwają mi się dwa wnioski:
+
+\begin{itemize}
+\item \textit{Lending Club} jest platformą internetową, każda osoba na wpół anonimowo może wypełnić wniosek w celu sprawdzenia swojej zdolności kredytowej. Zapytanie takie może być powielane przez jedną osobę dla wielu Stanów, deklaracji płacowych itd.;
+\item Mógł wystąpić czynnik ludzki przy wypełnianiu wniosku o pożyczkę lub jego magazynowaniu;
+\end{itemize}
+
+\subsection{Kod źródłowy}
+
+Kod źródłowy wszystkich omawianych skryptów napisanych w R oraz Python a także wszystkie rysunki dostępne są do pobrania na githubie. Link poniżej: 
+\begin{center}
+\url{https://github.com/arturwojtowicz/analiza_odrzuconych_pozyczek}
+\end{center}
+
 
 \clearpage
 

@@ -14,6 +14,24 @@ data_monthly = read.csv("rejected_monthly_stats.csv", sep=",") # Dane miesięczn
 data.ts = ts(data$Amount.requested, start = c(2007, 146), frequency=365.25) # Ponieważ 26 maja jest 146 dniem roku 2007
 data_monthly.ts = ts(data_monthly$Amount.requested, start = c(2007, 5), frequency = 12)
 
+png('images/data_ogolnie_ts.png',
+    width     = 3.25,
+    height    = 3.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4)
+
+par(mfrow=c(2,1))
+plot(data.ts/1000000, 
+     main = "Dzienna kwota odrzuconych pożyczek przez Lending Club",
+     xlab = 'Rok',
+     ylab = 'mln dolarów')
+plot(data_monthly.ts/1000000, 
+     main = "Miesięczna kwota odrzuconych pożyczek przez Lending Club",
+     xlab = 'Rok',
+     ylab = 'mln dolarów')
+dev.off()
+
 # Utworzenie okna uczącego się oraz testowego
 data.train = window(data.ts, end = c(2011, 365))
 data_monthly.train = window(data_monthly.ts, end = c(2011, 12))

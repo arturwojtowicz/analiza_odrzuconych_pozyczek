@@ -66,3 +66,17 @@ output_file = open('rejected_monthly_stats.csv', 'w')
 output_file.write(output_monthly)
 print('Monthly rejects done...')
 output_file.close()
+
+print('Finalizing...')
+cash = 0
+cars = 0
+for line in data[1::]:
+    line = line.replace('"', '')
+    line = line.split(',')
+    if float(line[0])>40000:
+        cash += 1
+        if 'car' in line[2]:
+            cars += 1
+
+print('For {} records, {} requested for more than 40000 dollars and {} of them was for car.\nIt was {} percent requests for a car.'.format(
+        len(data[1::]), cash, cars, round(cars/cash*100, 2)))
