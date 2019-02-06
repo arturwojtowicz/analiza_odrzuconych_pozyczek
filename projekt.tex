@@ -258,7 +258,9 @@ Mając na uwadze wybór jak najlepszego modelu, postanowiłem użyć w pakiecie 
 
 \subsection{Diagnostyka reszt modeli}
 
-Dla obu modeli nie widać żadnych regularnych wzorców. Przy PACF dla modelu AR(2) widzimy jednak wyjście poza poziom istotności dla opóźnienia równego 2. 
+Dla obu testowanych modeli, wykonana została diagnostyka reszt. Na poniższych wykresach (Rysunki \ref{fig:train_monthly_train_AR2_reszty} i \ref{fig:train_monthly_train_MA1_reszty}) nie widać nieregularnych wzorców ani niejednorodności wariancji.
+
+Z ACF i PACF wynika, że nie ma istotnych korelacji
 
 \newpage
 
@@ -284,12 +286,100 @@ Dla obu modeli nie widać żadnych regularnych wzorców. Przy PACF dla modelu AR
 
 \subsection{Prognozowanie}
 
+\subsubsection{ARIMA}
+Prognozowanie zostało wykonane dla dwóch modeli ARIMA(2,1,0) oraz ARIMA(0,1,1), które możemy zauważyć na przedstawionych poniżej wykresach Rysunek \ref{fig:prognozy} i \ref{fig:mieszane}. Niestety za pomocą tych wykresów nie jesteśmy w stanie stwierdzić, który model jest lepiej dopasowany. 
 
+W tym celu na stronie \pageref{tab:tabela} wyznaczyłem oceny wykorzystując do tego kryteria błędów predykcji.
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=\textwidth]{images/prognozy.png}
+    \caption{Analizowany szereg czasowy przedstawiony osobno z wyznaczonymi prognozami dla modeli.}
+    \label{fig:prognozy}
+
+\end{figure}
+
+\newpage
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=\textwidth]{images/mieszane.png}
+    \caption{Przyrównanie analizowanego szeregu czasowego z wyznaczonymi prognozami dla modeli.}
+    \label{fig:mieszane}
+
+\end{figure}
+
+\newpage
+
+Wykorzystałem tutaj cztery rodzaje błędów predykcji:
+
+\begin{itemize}
+\item \textbf{MAE} (ang. \textit{Mean Absolute Error}) - Średni błąd całkowity;
+\item \textbf{RMSE} (ang. \textit{Root Mean Squared Error}) - Błąd średniokwadratowy;
+\item \textbf{MAPE} (ang. \textit{Mean Absolute Percentage Error}) - Procent średniego błędu całkowitego;
+\item \textbf{MASE} (ang. \textit{Mean Absolute Scaled Error}) - Wyskalowany średni błąd całkowity.
+\end{itemize}
+
+W poniższej tabeli widać, że najniższą wartością większości błędów oprócz średniokwadratowego reprezentował sobą model \textbf{MA(1)}.
+
+\begin{center}
+\begin{tabular}{l|l|l|l|l|}
+\cline{2-5}
+                                     & \textbf{MAE} & \textbf{RMSE} & \textbf{MAPE} & \textbf{MASE} \\ \hline
+\multicolumn{1}{|l|}{\textbf{AR(2)}} & 17691188.13  & 29636744.22   & 33.49         & 0.29          \\ \hline
+\multicolumn{1}{|l|}{\textbf{MA(1)}} & 17645678.03  & 30238184.06   & 32.97         & 0.29          \\ \hline
+\end{tabular}
+\captionof{table}{Błędy predykcji modeli ARIM.A}
+\label{tab:tabela}
+\end{center}
+
+\subsubsection{Metoda Holta}
+
+Oceniając jakość modeli, postanowiłem skorzystać z prognozowania metodą Holta, która polega na wygładzaniu wykładniczym. Metoda ta została przeze mnie wybrana, ponieważ w danych występował trend, jednakże nie posiadaliśmy sezonowości.
+
+Prognoza ma charakter liniowy i jest przedstawiona na poniższym wykresie - Rysunek \ref{fig:holt}.
+
+
+\begin{center}
+\begin{tabular}{l|l|l|l|l|}
+\cline{2-5}
+                                     & \textbf{MAE} & \textbf{RMSE} & \textbf{MAPE} & \textbf{MASE} \\ \hline
+\multicolumn{1}{|l|}{\textbf{AR(2)}} & 18451960.86  & 27605036.61   & 76.86         & 0.30          \\ \hline
+\end{tabular}
+\captionof{table}{Błędy predykcji modelu Holta.}
+\label{tab:tabela2}
+\end{center}
+
+W powyższej tableli widzimy wcześniej omówione błędy predykcji dla metody Holta. Jak można łatwo zauważyć, metoda ta uzyskała jedynie niższy błąd średniokwadratowy. W ogólnej ocenie modelu wcale nie był on lepszy od wcześniej analizowanych modeli ARIMA.
+
+\clearpage
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=\textwidth]{images/holt.png}
+    \caption{Prognoza analizowanego szeregu metodą Holta z jego przyrównaniem do analizowanego szeregu czasowego.}
+    \label{fig:holt}
+
+\end{figure}
+
+\newpage
 
 \section{Wnioski}
+
+Wykonane analizy pozwoliły nam wybrać optymalny model do oszacowania prognozy. Przetestowane zostały 3 modele, z czego 2 były oparte na modelu ARIMA oraz jeden na modelu Holta.
+
+Model Holta chociaż z pierwszego punktu widzenia, patrząc na Rysunek \ref{fig:holt}, może wydawać się lepiej dopasowany od modeli ARIMA, tak błędy predykcji (w tym dwa najważniejsze MAPE oraz MASE) wykazały, że jest on gorzej dopasowany.
+
+Z modeli ARIMA najlepiej dopasowanym jest model ARIMA(0,1,1), ponieważ ma niższy procent średniego błędu całkowitego. 
+
+Dopasowany przeze mnie model nie jest idealny, możliwe, że jest to spowodowane moim błędem w ocenie lub za małą grupą uczącą się, dzięki której moglibyśmy wyznaczyć dokładniejszy model.
+
+
 
 \clearpage
 
 \listoffigures
+
+\listoftables
 
 \end{document}

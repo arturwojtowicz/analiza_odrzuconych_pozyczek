@@ -11,4 +11,6 @@
 \contentsline {section}{\numberline {3}Diagnostyka wybranych modeli}{12}{section.3}
 \contentsline {subsection}{\numberline {3.1}Diagnostyka reszt modeli}{12}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Prognozowanie}{15}{subsection.3.2}
-\contentsline {section}{\numberline {4}Wnioski}{15}{section.4}
+\contentsline {subsubsection}{\numberline {3.2.1}ARIMA}{15}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Metoda Holta}{17}{subsubsection.3.2.2}
+\contentsline {section}{\numberline {4}Wnioski}{19}{section.4}
