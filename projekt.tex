@@ -165,7 +165,7 @@ Kod źródłowy wszystkich omawianych skryptów napisanych w R oraz Python a tak
 
 \newpage
 
-\section{Wizualizacja}
+\section{Wizualizacja i przekształcenia}
 
 \subsection{Wykresy sezonowe}
 
@@ -180,6 +180,8 @@ Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelko
 
 \end{figure}
 
+\newpage
+
 \begin{figure}[h]
 
     \centering
@@ -188,6 +190,8 @@ Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelko
     \label{fig:data_monthly_train_sezonowy_ogolny}
 
 \end{figure}
+
+\newpage
 
 \begin{figure}[h]
 
@@ -202,6 +206,7 @@ Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelko
 
 \subsection{Wykresy autokorelacji}
 
+Poniżej widzimy wykres rozrzutu dla wartości opóźnionych danych miesięcznych analizowanego szeregu czasowego. Jak możemy zauważyć dla opóźnienia 1 mamy silną korelację czasową, co oznacza, że trend rzeczywiście istnieje. Analizując opóźnienie 12, widzimy, że liniowość nie jest zachowana, przez co mamy kolejną przesłankę do wykluczenia sezonowości w naszych danych.
 
 \begin{figure}[h]
 
@@ -212,6 +217,14 @@ Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelko
 
 \end{figure}
 
+\newpage
+
+Wykresy autokorelacji ACF oraz autokorelacji cząstkowej PACF dają nam również informację o tym, że w naszych danych występuje trend wzrostowy poprzez:
+\begin{itemize}
+\item ACF - Wysoka, dodatnia wartość początkowa, istotna statystycznie zanikająca;
+\item PACF - Wartości nie wychodzące poza przedziały ufności.
+\end{itemize}
+
 \begin{figure}[h]
 
     \centering
@@ -221,12 +234,62 @@ Na wykresie pudełkowym widocznym na Rysunek \ref{fig:data_monthly_train_pudelko
 
 \end{figure}
 
+\newpage
+
+\subsection{Różnicowanie szeregu czasowego}
+
+Za pomocą przekształceń typu: różnicowanie, dekompozycja, transformacja BoxaCoxa. Jesteśmy w stanie pozbyć się trendów oraz sezonowości z naszych danych. Przekształcone dane, w których pozbyliśmy się regularnych tendencji, są znacznie lepsze do analizy oraz interpretacji.
+
+Na przedstawionym poniżej wykresie (Rysunek \ref{fig:data_monthly_train_roznicowanie_z_opoznieniem_jeden}) widoczny jest szereg czasowy, po zastosowaniu różnicowania z opóźnieniem jeden. Po różnicowaniu pozbyliśmy się trendu wzrostowego, co widoczne jest na wykresach autokorelacji ACF oraz autokorelacji cząstkowej PACF. Dzięki nim, możemy wytypować modele. Są to kolejno \textbf{AR(2)}, \textbf{MA(1)}.
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=0.9\textwidth]{images/data_monthly_train_roznicowanie_z_opoznieniem_jeden.png}
+    \caption{Wykres różnicowania z opóźnieniem jeden dla danych miesięcznych analizowanego szeregu czasowego.}
+    \label{fig:data_monthly_train_roznicowanie_z_opoznieniem_jeden}
+
+\end{figure}
+
+\newpage
+
+\section{Diagnostyka wybranych modeli}
+
+Mając na uwadze wybór jak najlepszego modelu, postanowiłem użyć w pakiecie R funkcji \textit{auto.arima}, która wybiera optymalne różnicowanie oraz najlepszy model dla naszych danych. Funkcja ta zwróciła w efekcie model \textbf{MA(2)} z różnicowaniem jeden, czyli taki sam, jaki został przed chwilą wybrany przeze mnie do dalszych analiz.
+
+\subsection{Diagnostyka reszt modeli}
+
+Dla obu modeli nie widać żadnych regularnych wzorców. Przy PACF dla modelu AR(2) widzimy jednak wyjście poza poziom istotności dla opóźnienia równego 2. 
+
+\newpage
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=\textwidth]{images/train_monthly_train_AR2_reszty.png}
+    \caption{Wykres reszt modelu AR(2).}
+    \label{fig:train_monthly_train_AR2_reszty}
+
+\end{figure}
+
+\newpage
+
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=\textwidth]{images/train_monthly_train_MA1_reszty.png}
+    \caption{Wykres reszt modelu MA(1).}
+    \label{fig:train_monthly_train_MA1_reszty}
+
+\end{figure}
+
+\newpage
+
+\subsection{Prognozowanie}
+
+
+
+\section{Wnioski}
+
 \clearpage
 
 \listoffigures
-
-\clearpage
-
-\listoftables
 
 \end{document}

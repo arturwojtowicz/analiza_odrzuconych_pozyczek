@@ -124,30 +124,6 @@ Pacf(data_monthly.train,
      main='Wykres autokorelacji cząstkowej PACF wartości miesięcznych')
 dev.off()
 
-# Transformacja BoxaCoxa
-lambda.data_monthly.ts = BoxCox.lambda(data_monthly.train);lambda.data_monthly.ts
-data_monthly.train.BoxCox = BoxCox(data_monthly.train, lambda = lambda.data_monthly.ts)
-
-
-png('images/data_monthly_transformacja_boxacoxa.png',
-    width     = 3.25,
-    height    = 3.25,
-    units     = "in",
-    res       = 1200,
-    pointsize = 4)
-
-par(mfrow=c(2,1))
-plot(data_monthly.train/1000000, 
-     main="Dane miesięczne oryginalne",
-     ylab = "Kwota pożyczek (mln dolarów)",
-     xlab = "Miesiąc")
-plot(data_monthly.train.BoxCox, 
-     main="Dane miesięczne z transformacją BoxaCoxa przy lambda = 0.3692711",
-     yaxt = 'n',
-     ylab = '',
-     xlab = "Miesiąc")
-dev.off()
-
 
 # Różnicowanie 
 
@@ -173,35 +149,8 @@ png('images/data_monthly_train_roznicowanie_z_opoznieniem_jeden.png',
 tsdisplay(data_monthly.train.diff, main = "Dane po zróżnicowaniu z opóźnieniem 1")
 dev.off()
 
-# Dekompozycja
-data_monthly.train.decom = decompose(data_monthly.train, type="additive")
-
-png('images/train_monthly_train_dekompozycja.png',
-    width     = 3.25,
-    height    = 3.25,
-    units     = "in",
-    res       = 1200,
-    pointsize = 4)
-
-plot(data_monthly.train.decom)
-dev.off()
-
-
-png('images/train_monthly_train_fluktuacje.png',
-    width     = 3.25,
-    height    = 3.25,
-    units     = "in",
-    res       = 1200,
-    pointsize = 4)
-
-tsdisplay(data_monthly.train.decom$random, main="Losowe fluktuacje")
-dev.off()
-
-# Testowanie hipotezy o rozkładzie normalnym dla reszt
-shapiro.test(data_monthly.train.diff) # Wykluczenie białego szumu. Odrzucamy h0
-
-# AR(1) - z PACF
-# MA(2) - z ACF zróżnicowania
+# AR(2) - z PACF
+# MA(1) - z ACF zróżnicowania
 data_monthly.AR2 = Arima(data_monthly.train, order = c(2,1,0), seasonal = c(0,0,0))
 data_monthly.MA1 = Arima(data_monthly.train, order = c(0,1,1), seasonal = c(0,0,0))
 
@@ -288,7 +237,6 @@ round(accuracy(data_monthly.MA1.prognoses)[,criteries],2)
 
 
 # METODA HOLTA
-data.holt <- holt(data.train, h=length(data.test))
 data_monthly.holt <- holt(data_monthly.train, h=length(data_monthly.test))
 
 png('images/holt.png',
@@ -297,12 +245,6 @@ png('images/holt.png',
     units     = "in",
     res       = 1200,
     pointsize = 4)
-
-par(mfrow=c(2,1))
-ts.plot(data.test/1000000, data.holt$mean/1000000, main = "Prognozowanie metodą Holta dla danych dziennych",
-        col = c('black', 'red'), lty=1:2, xlab="Okres", ylab = "mln dolarów")
-grid()
-legend("bottomright", legend=c("Holt", "Zbiór testowy"), col = c("red", "black"), lty=1:2)
 
 ts.plot(data_monthly.test/1000000, data_monthly.holt$mean/1000000, main = "Prognozowanie metodą Holta dla danych miesięcznych",
         col = c('black', 'red'), lty=1:2, xlab="Okres", ylab = "mln dolarów")

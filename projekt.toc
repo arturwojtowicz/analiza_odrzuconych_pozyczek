@@ -4,6 +4,11 @@
 \contentsline {subsection}{\numberline {1.1}Zbi\IeC {\'o}r danych}{2}{subsection.1.1}
 \contentsline {subsection}{\numberline {1.2}Odst\IeC {\k e}pstwa w danych}{4}{subsection.1.2}
 \contentsline {subsection}{\numberline {1.3}Kod \IeC {\'z}r\IeC {\'o}d\IeC {\l }owy}{5}{subsection.1.3}
-\contentsline {section}{\numberline {2}Wizualizacja}{6}{section.2}
+\contentsline {section}{\numberline {2}Wizualizacja i przekszta\IeC {\l }cenia}{6}{section.2}
 \contentsline {subsection}{\numberline {2.1}Wykresy sezonowe}{6}{subsection.2.1}
-\contentsline {subsection}{\numberline {2.2}Wykresy autokorelacji}{8}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.2}Wykresy autokorelacji}{9}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}R\IeC {\'o}\IeC {\.z}nicowanie szeregu czasowego}{11}{subsection.2.3}
+\contentsline {section}{\numberline {3}Diagnostyka wybranych modeli}{12}{section.3}
+\contentsline {subsection}{\numberline {3.1}Diagnostyka reszt modeli}{12}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Prognozowanie}{15}{subsection.3.2}
+\contentsline {section}{\numberline {4}Wnioski}{15}{section.4}
